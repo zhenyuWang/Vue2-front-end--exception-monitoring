@@ -23,19 +23,27 @@ class HomeController extends Controller {
   // 前端报错，上报error
   async reportError() {
     const { ctx } = this;
-    const { location, message, stack, component } = ctx.request.body;
     const sourceMapDir = path.join(this.config.baseDir, 'upload');
     const stackParser = new StackParser(sourceMapDir);
+    const { environment, location, message, stack, component, browserInfo, userId, userName } = ctx.request.body;
     const errInfo = await stackParser.parseStackTrack(stack, message);
+    const now = new Date();
+    const time = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
     const mailMsg = `
-    <h3>message:${message}</h3><br/>
-    <p>component:${component}</p><br/>
-    <p>source:${errInfo.source}</p><br/>
-    <p>line::${errInfo.line}</p><br/>
-    <p>column:${errInfo.column}</p><br/>
+    <h3>message:${message}</h3>
+    <h3>location:${location}</h3>
+    <p>component:${component}</p>
+    <p>source:${errInfo.source}</p>
+    <p>line::${errInfo.line}</p>
+    <p>column:${errInfo.column}</p>
     <p>name::${errInfo.name}</p>
+    <p>time::${time}</p>
+    <p>browserInfo::${browserInfo}</p>
+    <p>userId::${userId}</p>
+    <p>userName::${userName}</p>
     `;
-    sendMail('1174352324@qq.com', 'nldmfvszvpnjjeid', '13641039885@163.com', location, mailMsg);
+    // 发送邮件
+    sendMail('1174352324@qq.com', 'nldmfvszvpnjjeid', '13641039885@163.com', environment, mailMsg);
     ctx.body = {
       header: {
         code: 0,

@@ -18,7 +18,7 @@ export default {
   methods: {
     add() {
       this.count++;
-      abc();
+      throw Error("123");
     }
   }
 };

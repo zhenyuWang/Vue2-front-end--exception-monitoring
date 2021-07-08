@@ -8,19 +8,21 @@ class UploadSourceMapWebPackPlugin {
     this.options = options
   }
   apply(compiler) {
-    // 定义在打包后执行
-    compiler.hooks.done.tap('uploadSourceMapWebPackPlugin', async status => {
-      // 读取sourcemap文件
-      const list = glob.sync(path.join(status.compilation.outputOptions.path, './**/*.{js.map,}'))
-      for (let filename of list) {
-        await this.upload(this.options.url, filename)
-      }
-    })
+    // 只在生产环境打包时上送sourcemap
+    if (process.env.NODE_ENV === 'production') {
+      // 定义在打包后执行
+      compiler.hooks.done.tap('uploadSourceMapWebPackPlugin', async status => {
+        // 读取sourcemap文件
+        const list = glob.sync(path.join(status.compilation.outputOptions.path, './**/*.{js.map,}'))
+        for (let filename of list) {
+          await this.upload(this.options.url, filename)
+        }
+      })
+    }
   }
   // 上传文件方法
   upload(url, file) {
     return new Promise(resolve => {
-      console.log('upload sourcemap', url, file);
       const req = http.request(
         `${url}?name=${path.basename(file)}`,
         {

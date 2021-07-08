@@ -22,11 +22,9 @@ function sendMail(from, fromPass, receivers, subject, msg) {
     subject,
     // text : msg,
     html: msg,
-  }, (err, res) => {
+  }, err => {
     if (err) {
-      console.log('error: ', err);
-    } else {
-      console.log('res', res);
+      console.log('send mail error: ', err);
     }
   });
 }
