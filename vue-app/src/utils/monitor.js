@@ -1,5 +1,6 @@
 
 import axios from 'axios'
+// 获取浏览器信息
 function getBrowserInfo() {
   const agent = navigator.userAgent.toLowerCase();
   const regIE = /msie [\d.]+;/gi;
@@ -39,15 +40,21 @@ function getBrowserInfo() {
   }
 }
 const handleError = Vue => {
+  // vue 捕获错误钩子函数
   Vue.config.errorHandler = (err, vm) => {
     let environment = '';
-    console.log('process.env.NODE_ENV', process.env.NODE_ENV);
+    // 获取环境信息
     if (process.env.NODE_ENV === "production") {
       environment = '生产环境'
     }
+    // 开发环境抛出Error
     if (!environment) {
       throw Error(err);
     }
+    /* 
+      上送报错信息
+      这里可以定制任何信息,比如用户信息,用户点击历史记录,用户路由历史记录等
+    */
     axios({
       method: 'post',
       url: `${process.env.VUE_APP_MONITOR_BASE_API}/mointor/reportError`,

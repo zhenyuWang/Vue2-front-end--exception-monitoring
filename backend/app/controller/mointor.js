@@ -26,9 +26,12 @@ class HomeController extends Controller {
     const sourceMapDir = path.join(this.config.baseDir, 'upload');
     const stackParser = new StackParser(sourceMapDir);
     const { environment, location, message, stack, component, browserInfo, userId, userName } = ctx.request.body;
+    // 通过上送的sourcemap文件，配合error信息，解析报错信息
     const errInfo = await stackParser.parseStackTrack(stack, message);
+    // 获取当前时间
     const now = new Date();
     const time = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+    // 组织邮件正文
     const mailMsg = `
     <h3>message:${message}</h3>
     <h3>location:${location}</h3>
@@ -42,8 +45,8 @@ class HomeController extends Controller {
     <p>userId::${userId}</p>
     <p>userName::${userName}</p>
     `;
-    // 发送邮件
-    sendMail('1174352324@qq.com', 'nldmfvszvpnjjeid', '13641039885@163.com', environment, mailMsg);
+    // 发送邮件                                            主题        正文
+    sendMail('发件人邮箱', '发件人邮箱授权码', '收件人邮箱', environment, mailMsg);
     ctx.body = {
       header: {
         code: 0,

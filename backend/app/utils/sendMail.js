@@ -1,5 +1,6 @@
 'use strict';
 const nodemailer = require('nodemailer');
+// 发送邮件方法
 function sendMail(from, fromPass, receivers, subject, msg) {
   const smtpTransport = nodemailer.createTransport({
     host: 'smtp.qq.email',
@@ -14,13 +15,12 @@ function sendMail(from, fromPass, receivers, subject, msg) {
   });
 
   smtpTransport.sendMail({
-    // from    : '标题别名 <foobar@latelee.org>',
     from,
     // 收件人邮箱，多个邮箱地址间用英文逗号隔开
     to: receivers,
     // 邮件主题
     subject,
-    // text : msg,
+    // 邮件正文
     html: msg,
   }, err => {
     if (err) {
