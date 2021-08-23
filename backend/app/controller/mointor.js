@@ -25,7 +25,20 @@ class HomeController extends Controller {
     const { ctx } = this;
     const sourceMapDir = path.join(this.config.baseDir, 'upload');
     const stackParser = new StackParser(sourceMapDir);
-    const { environment, location, message, stack, component, browserInfo, userId, userName } = ctx.request.body;
+    const { environment, location, message, stack, component, browserInfo, userId, userName, routerHistory, clickHistory } = ctx.request.body;
+    let routerHistoryStr = '<h3>router history</h3>',
+      clickHistoryStr = '<h3>click history</h3>';
+    routerHistory.forEach(item => {
+      routerHistoryStr += `<p>name:${item.name} | fullPath:${item.fullPath}</p>`;
+      routerHistoryStr += `<p>params:${JSON.stringify(item.params)} | query:${JSON.stringify(item.query)}</p><p>--------------------</p>`;
+    });
+    clickHistory.forEach(item => {
+      clickHistoryStr += `<p>pageX:${item.pageX} | pageY:${item.pageY}</p>`;
+      clickHistoryStr += `<p>nodeName:${item.nodeName} | className:${item.className} | id:${item.id}</p>`;
+      clickHistoryStr += `<p>baseURI:${item.baseURI}</p>`;
+      clickHistoryStr += `<p>innerText:${item.innerText}</p><p>--------------------</p>`;
+    });
+    console.log('ctx.request.body', ctx.request.body);
     // 通过上送的sourcemap文件，配合error信息，解析报错信息
     const errInfo = await stackParser.parseStackTrack(stack, message);
     // 获取当前时间
@@ -44,9 +57,11 @@ class HomeController extends Controller {
     <p>browserInfo::${browserInfo}</p>
     <p>userId::${userId}</p>
     <p>userName::${userName}</p>
+    ${routerHistoryStr}
+    ${clickHistoryStr}
     `;
     // 发送邮件                                            主题        正文
-    sendMail('发件人邮箱', '发件人邮箱授权码', '收件人邮箱', environment, mailMsg);
+    sendMail('发件箱地址', '发件箱授权码', '收件箱地址', environment, mailMsg);
     ctx.body = {
       header: {
         code: 0,
