@@ -6,25 +6,38 @@ const http = require('http')
 class UploadSourceMapWebPackPlugin {
   constructor(options) {
     this.options = options
+    console.log('constructor')
   }
   apply(compiler) {
-    // 只在生产环境打包时上送sourcemap
-    if (process.env.NODE_ENV === 'production') {
+    console.log('apply')
+    console.log(process.env.NODE_ENV)
+    // 打包时上送sourcemap
+    if (process.env.NODE_ENV !== "development") {
+      console.log('非本地开发环境')
+      let env = '';
+      if (process.env.VUE_APP_BASE_API === '测试环境地址') {
+        env = 'uat'
+      } else if (process.env.VUE_APP_BASE_API === '生产环境地址') {
+        env = 'prod'
+      }
+      console.log('apply env',env);
       // 定义在打包后执行
       compiler.hooks.done.tap('uploadSourceMapWebPackPlugin', async status => {
         // 读取sourcemap文件
         const list = glob.sync(path.join(status.compilation.outputOptions.path, './**/*.{js.map,}'))
-        for (let filename of list) {
-          await this.upload(this.options.url, filename)
+        for (const filename of list) {
+          await this.upload(this.options.url, filename, env)
+          await fs.unlinkSync(filename)
         }
       })
     }
   }
   // 上传文件方法
-  upload(url, file) {
+  upload(url, file,env) {
+    console.log('env',env)
     return new Promise(resolve => {
       const req = http.request(
-        `${url}?name=${path.basename(file)}`,
+        `${url}?name=${path.basename(file)}&&env=${env}`,
         {
           method: "POST",
           headers: {

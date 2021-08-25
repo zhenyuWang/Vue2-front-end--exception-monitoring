@@ -42,14 +42,12 @@ function getBrowserInfo() {
 const handleError = Vue => {
   // vue 捕获错误钩子函数
   Vue.config.errorHandler = (err, vm) => {
-    let environment = '';
+    // 本地开发环境抛出异常
+    if (process.env.NODE_ENV === "development") throw Error(err)
+    let environment = '测试环境';
     // 获取环境信息
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.VUE_APP_BASE_API === "生产环境地址") {
       environment = '生产环境'
-    }
-    // 开发环境抛出Error
-    if (!environment) {
-      throw Error(err);
     }
     /* 
       上送报错信息
