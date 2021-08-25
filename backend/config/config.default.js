@@ -19,7 +19,7 @@ module.exports = appInfo => {
   config.security = {
     csrf: false,
     debug: 'csrf-disable',
-    domainWhiteList: [ 'http://localhost:8080', 'http://127.0.0.1:8080' ],
+    domainWhiteList: [ 'http://localhost:8080', 'http://127.0.0.1:8080', 'http://127.0.0.1:5000' ],
   };
 
   // add your middleware config here

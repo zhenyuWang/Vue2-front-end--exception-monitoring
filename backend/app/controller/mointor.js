@@ -35,11 +35,11 @@ class HomeController extends Controller {
     const stackParser = new StackParser(sourceMapDir);
     let routerHistoryStr = '<h3>router history</h3>',
       clickHistoryStr = '<h3>click history</h3>';
-    routerHistory.forEach(item => {
+    routerHistory && routerHistory.length && routerHistory.forEach(item => {
       routerHistoryStr += `<p>name:${item.name} | fullPath:${item.fullPath}</p>`;
       routerHistoryStr += `<p>params:${JSON.stringify(item.params)} | query:${JSON.stringify(item.query)}</p><p>--------------------</p>`;
     });
-    clickHistory.forEach(item => {
+    clickHistory && clickHistory.length && clickHistory.forEach(item => {
       clickHistoryStr += `<p>pageX:${item.pageX} | pageY:${item.pageY}</p>`;
       clickHistoryStr += `<p>nodeName:${item.nodeName} | className:${item.className} | id:${item.id}</p>`;
       clickHistoryStr += `<p>baseURI:${item.baseURI}</p>`;

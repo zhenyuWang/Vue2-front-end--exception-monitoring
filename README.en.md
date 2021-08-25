@@ -1,5 +1,7 @@
-# 异常监控
+# Exception monitoring
+
+[简体中文](./README.md) | English
 
 #### Description
 
-学习前端异常监控使用
+Front-end exception monitoring Demo
