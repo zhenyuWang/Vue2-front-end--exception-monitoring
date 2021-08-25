@@ -9,10 +9,11 @@ class HomeController extends Controller {
   // 前端打包时，上送sourcemap文件
   async uploadSourceMap() {
     const { ctx } = this;
-    const stream = ctx.req;
-    const filename = ctx.query.name;
-    const dir = path.join(this.config.baseDir, 'upload');
-    // 判断upload文件夹是否存在
+    const stream = ctx.req,
+      filename = ctx.query.name,
+      env = ctx.query.env;
+    const dir = path.join(this.config.baseDir, `upload/${env}`);
+    // 判断upload/env文件夹是否存在
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
@@ -23,9 +24,15 @@ class HomeController extends Controller {
   // 前端报错，上报error
   async reportError() {
     const { ctx } = this;
-    const sourceMapDir = path.join(this.config.baseDir, 'upload');
-    const stackParser = new StackParser(sourceMapDir);
     const { environment, location, message, stack, component, browserInfo, userId, userName, routerHistory, clickHistory } = ctx.request.body;
+    let env = '';
+    if (environment === '测试环境') {
+      env = 'uat';
+    } else if (environment === '生产环境') {
+      env = 'prod';
+    }
+    const sourceMapDir = path.join(this.config.baseDir, `upload/${env}`);
+    const stackParser = new StackParser(sourceMapDir);
     let routerHistoryStr = '<h3>router history</h3>',
       clickHistoryStr = '<h3>click history</h3>';
     routerHistory.forEach(item => {
@@ -38,7 +45,6 @@ class HomeController extends Controller {
       clickHistoryStr += `<p>baseURI:${item.baseURI}</p>`;
       clickHistoryStr += `<p>innerText:${item.innerText}</p><p>--------------------</p>`;
     });
-    console.log('ctx.request.body', ctx.request.body);
     // 通过上送的sourcemap文件，配合error信息，解析报错信息
     const errInfo = await stackParser.parseStackTrack(stack, message);
     // 获取当前时间
@@ -61,7 +67,8 @@ class HomeController extends Controller {
     ${clickHistoryStr}
     `;
     // 发送邮件                                            主题        正文
-    sendMail('发件箱地址', '发件箱授权码', '收件箱地址', environment, mailMsg);
+    // sendMail('发件箱地址', '发件箱授权码', '收件箱地址', environment, mailMsg);
+    sendMail('1174352324@qq.com', 'pprzjmtmmmonbabg', '13641039885@163.com', environment, mailMsg);
     ctx.body = {
       header: {
         code: 0,
