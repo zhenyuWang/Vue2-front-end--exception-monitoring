@@ -4,4 +4,4 @@
 
 #### Description
 
-Front-end exception monitoring Demo
+Front-end exception monitoring Demo for Vue2
