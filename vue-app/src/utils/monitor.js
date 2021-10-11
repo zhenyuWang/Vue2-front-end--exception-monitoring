@@ -43,7 +43,7 @@ const handleError = Vue => {
   // vue 捕获错误钩子函数
   Vue.config.errorHandler = (err, vm) => {
     // 本地开发环境抛出异常
-    if (process.env.NODE_ENV === "development") throw Error(err)
+    // if (process.env.NODE_ENV === "development") throw Error(err)
     let environment = '测试环境';
     // 获取环境信息
     if (process.env.VUE_APP_BASE_API === "生产环境地址") {
@@ -61,8 +61,40 @@ const handleError = Vue => {
         location: window.location.href,
         message: err.message,
         stack: err.stack,
+        // 当前组件
         component: vm.$vnode.tag,
-        browserInfo: getBrowserInfo()
+        // 浏览器信息
+        browserInfo: getBrowserInfo(),
+        // 以下信息可以放在vuex store中维护
+        // 用户ID
+        userId:'001',
+        // 用户名称
+        userName:'张三',
+        // 路由记录
+        routerHistory:[
+          {
+            fullPath:'/login',
+            name:'Login',
+            query:{},
+            params:{},
+          },{
+            fullPath:'/home',
+            name:'Home',
+            query:{},
+            params:{},
+          }
+        ],
+        // 点击记录
+        clickHistory:[
+          {
+            pageX:50,
+            pageY:50,
+            nodeName:'div',
+            className:'test',
+            id:'test',
+            innerText:'测试按钮'
+          }
+        ],
       }
     });
   }

@@ -1,4 +1,4 @@
-const UploadSourceMapWebPackPlugin = require('./src/plugin/uploadSourceMapWebPackPlugin')
+const UploadSourceMapWebPackPlugin = require('./src/plugins/uploadSourceMapWebPackPlugin')
 module.exports = {
   publicPath: "./",
   outputDir: "dist", // 项目打包输出目录
