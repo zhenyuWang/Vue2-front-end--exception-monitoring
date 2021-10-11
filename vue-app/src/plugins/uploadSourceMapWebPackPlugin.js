@@ -9,7 +9,6 @@ class UploadSourceMapWebPackPlugin {
   }
   apply(compiler) {
     // 打包时上送sourcemap
-    console.log('upload sourcemap apply')
     // 通过环境变量判断当前环境
     let env = '';
     if (process.env.VUE_APP_BASE_API === '测试环境地址') {
@@ -17,20 +16,25 @@ class UploadSourceMapWebPackPlugin {
     } else if (process.env.VUE_APP_BASE_API === '生产环境地址') {
       env = 'prod'
     }
-    console.log('apply env',env);
     // 定义在打包后执行
     compiler.hooks.done.tap('uploadSourceMapWebPackPlugin', async status => {
+      // 处理目标文件夹（没有创建，有则清空）
+      http.get(`${this.options.emptyFolderUrl}?env=${env}`,()=>{
+      }).on("error",(e)=>{
+        console.log(`handle folder error: ${e.message}`)
+      })
       // 读取sourcemap文件
       const list = glob.sync(path.join(status.compilation.outputOptions.path, './**/*.{js.map,}'))
       for (const filename of list) {
-        await this.upload(this.options.url, filename, env)
+        // 上传sourcemap
+        await this.upload(this.options.uploadUrl, filename, env)
+        // 删除sourcemap
         await fs.unlinkSync(filename)
       }
     })
   }
   // 上传文件方法
   upload(url, file,env) {
-    console.log('env',env)
     return new Promise(resolve => {
       const req = http.request(
         `${url}?name=${path.basename(file)}&&env=${env}`,

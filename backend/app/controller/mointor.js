@@ -5,19 +5,38 @@ const fs = require('fs');
 const StackParser = require('../utils/stackparser');
 const sendMail = require('../utils/sendMail');
 
-class HomeController extends Controller {
+class MointorController extends Controller {
+  // 准备要上传的sourcemap的目标文件夹（没有则创建，如果有历史文件则清除）
+  async emptyFolder() {
+    const { ctx } = this;
+    const env = ctx.query.env;
+    const dir = path.join(this.config.baseDir, `upload/${env}`);
+    // 判断upload/env文件夹是否存在
+    if (!fs.existsSync(dir)) {
+      // 没有创建
+      fs.mkdirSync(dir);
+    } else {
+      // 有清空
+      const files = fs.readdirSync(dir);
+      files.forEach(file => {
+        // 每一个文件路径
+        const currentPath = dir + '/' + file;
+        // 因为这里存放的都是.map文件，所以不需要判断是文件还是文件夹
+        fs.unlinkSync(currentPath);
+      });
+    }
+  }
   // 前端打包时，上送sourcemap文件
   async uploadSourceMap() {
     const { ctx } = this;
     const stream = ctx.req,
       filename = ctx.query.name,
       env = ctx.query.env;
+    // 要上传的目标路径
     const dir = path.join(this.config.baseDir, `upload/${env}`);
-    // 判断upload/env文件夹是否存在
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
+    // 目标文件
     const target = path.join(dir, filename);
+    // 写入文件内容
     const writeStream = fs.createWriteStream(target);
     stream.pipe(writeStream);
   }
@@ -50,7 +69,6 @@ class HomeController extends Controller {
     });
     // 通过上送的sourcemap文件，配合error信息，解析报错信息
     const errInfo = await stackParser.parseStackTrack(stack, message);
-    console.log('errInfo', errInfo);
     // 获取当前时间
     const now = new Date();
     const time = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
@@ -81,7 +99,6 @@ class HomeController extends Controller {
     };
     ctx.status = 200;
   }
-
 }
 
-module.exports = HomeController;
+module.exports = MointorController;
