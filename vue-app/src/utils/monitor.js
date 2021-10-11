@@ -1,4 +1,3 @@
-
 import axios from 'axios'
 // 获取浏览器信息
 function getBrowserInfo() {

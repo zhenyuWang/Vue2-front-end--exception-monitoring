@@ -14,7 +14,6 @@ module.exports = class StackParser {
     error.stack = stack;
     // 获取error堆栈信息
     const stackFrame = ErrorStachParser.parse(error);
-    console.log('stackFrame', stackFrame);
     return await this.getOriginalErrorStack(stackFrame);
   }
   // 获取原始错误堆栈信息
