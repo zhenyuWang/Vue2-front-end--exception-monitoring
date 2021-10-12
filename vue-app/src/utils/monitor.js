@@ -43,9 +43,9 @@ const handleError = Vue => {
   Vue.config.errorHandler = (err, vm) => {
     // 本地开发环境抛出异常
     // if (process.env.NODE_ENV === "development") throw Error(err)
-    let environment = '测试环境';
     // 获取环境信息
-    if (process.env.VUE_APP_BASE_API === "生产环境地址") {
+    let environment = '测试环境';
+    if (process.env.VUE_APP_BASE_API === '生产环境地址') {
       environment = '生产环境'
     }
     /* 
