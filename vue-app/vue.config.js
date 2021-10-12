@@ -10,7 +10,9 @@ module.exports = {
     plugins: [
       // 使用 upload sourcemap webpack plugin
       new UploadSourceMapWebPackPlugin({
+        // 处理目标文件夹接口地址
         handleTargetFolderUrl:`${process.env.VUE_APP_MONITOR_BASE_API}/mointor/emptyFolder`,
+        // 上传sourcemap文件接口地址
         uploadUrl: `${process.env.VUE_APP_MONITOR_BASE_API}/mointor/uploadSourceMap`
       })
     ]
