@@ -19,7 +19,8 @@ class UploadSourceMapWebPackPlugin {
     // 定义在打包后执行
     compiler.hooks.done.tap('uploadSourceMapWebPackPlugin', async status => {
       // 处理目标文件夹（没有创建，有则清空）
-      http.get(`${this.options.emptyFolderUrl}?env=${env}`,()=>{
+      http.get(`${this.options.handleTargetFolderUrl}?env=${env}`,()=>{
+        console.log('handleTargetFolderUrl success');
       }).on("error",(e)=>{
         console.log(`handle folder error: ${e.message}`)
       })
